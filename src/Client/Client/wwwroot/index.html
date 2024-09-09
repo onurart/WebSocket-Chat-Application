@@ -1,0 +1,45 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+</head>
+<body>
+    <h1>WebSocket Chat Client</h1>
+    <div id="chat-box" style="border: 1px solid #000; width: 300px; height: 300px; overflow-y: scroll;"></div>
+    <input type="text" id="messageInput" placeholder="Type a message..." style="width: 300px;">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        var socket = new WebSocket("ws://localhost:5001/ws");
+
+        // Bağlandığında
+        socket.onopen = function (event) {
+            document.getElementById("chat-box").innerHTML += "<p>Connected to WebSocket server</p>";
+        };
+
+        // Mesaj alındığında
+        socket.onmessage = function (event) {
+            document.getElementById("chat-box").innerHTML += "<p>" + event.data + "</p>";
+        };
+
+        // Hata durumunda
+        socket.onerror = function (event) {
+            document.getElementById("chat-box").innerHTML += "<p style='color: red;'>Error: " + event.data + "</p>";
+        };
+
+        // Bağlantı kapandığında
+        socket.onclose = function (event) {
+            document.getElementById("chat-box").innerHTML += "<p style='color: gray;'>Connection closed</p>";
+        };
+
+        // Mesaj gönderme fonksiyonu
+        function sendMessage() {
+            var message = document.getElementById("messageInput").value;
+            document.getElementById("chat-box").innerHTML += "<p>You: " + message + "</p>";
+            socket.send(message);
+        }
+    </script>
+</body>
+</html>
